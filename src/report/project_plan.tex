@@ -1,0 +1,249 @@
+% =====================================================================
+% EE 311 Project Plan (IEEE journal format)
+% Compile with pdflatex, or upload this single file to Overleaf.
+% =====================================================================
+\documentclass[journal]{IEEEtran}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{cite}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{url}
+
+% ---- Author (single-person project) ----
+\newcommand{\authorname}{Oğuz Kağan Göçmez}
+
+\begin{document}
+
+\title{Machine Learning Prediction of Heating and Cooling Loads of Residential Buildings\\[0.3em]
+{\LARGE Project Plan}}
+
+\author{\authorname%
+\thanks{The author is with Özyeğin University, İstanbul, Türkiye.
+This plan is part of the EE~311 Introduction to Artificial Intelligence,
+Machine Learning and Data Science course project, Fall 2026.}}
+
+\maketitle
+
+% ---------------------------------------------------------------------
+\begin{abstract}
+Heating and cooling loads determine the size of the heating, ventilation and air conditioning (HVAC)
+equipment that a building needs. They are usually computed with detailed simulation software, which is
+slow and requires expert users. Machine learning (ML) models trained on simulated buildings can give
+the same estimates in a fraction of a second. In this project we use the UCI Energy Efficiency dataset,
+which contains 768 residential buildings simulated in Ecotect and described by eight design parameters
+(relative compactness, surface area, wall area, roof area, overall height, orientation, glazing area and
+glazing area distribution). We predict two outputs: the heating load (HL) and the cooling load (CL).
+Following the reference study of Tsanas and Xifara, we will explore the data statistically, compare six
+regression models with repeated 10-fold cross-validation and three error measures, tune the most
+promising models, and analyze which inputs matter most.
+
+As our own contribution, we will test how well the models generalize to building shapes that were not
+seen during training. In a random split, buildings that differ only in orientation, which mostly have
+very similar loads, end up in both the training and the test sets, which may make the reported errors
+optimistic. Our first experiments already reproduce the statistical analysis of the reference study, and
+an untuned random forest reaches a mean absolute error of 0.31 for HL and 0.98 for CL, compared with
+0.51 and 1.42 in the reference study.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Building energy performance, heating load, cooling load, machine learning, regression, cross-validation.
+\end{IEEEkeywords}
+
+% ---------------------------------------------------------------------
+\section{Introduction}
+\IEEEPARstart{H}{VAC} systems account for most of the energy used in buildings, so estimating heating
+and cooling loads early in the design phase helps to design more energy-efficient buildings~\cite{tsanas2012}.
+Simulation tools give reliable estimates but are time-consuming, which has motivated the use of ML
+models such as decision trees~\cite{yu2010}, support vector machines~\cite{dong2005} and polynomial
+regression~\cite{catalina2008}.
+
+Tsanas and Xifara~\cite{tsanas2012} published the dataset used in this project~\cite{uci2012}. They
+compared a robust linear model, iteratively reweighted least squares (IRLS), with a random forest (RF),
+and reported mean absolute errors (MAE) of 0.51 for HL and 1.42 for CL with the RF. Later studies
+applied other artificial intelligence techniques~\cite{chou2014} and genetic programming~\cite{castelli2015}
+to the same data. The dataset is also a common benchmark: \v{Z}egklitz and Po\v{s}\'{\i}k~\cite{zegklitz2017}
+used it to compare symbolic regression methods with a tuned RF and support vector regression (SVR), and
+Yazici \emph{et al.}~\cite{yazici2018} used it to test ML models on a low-power Internet of Things device.
+We follow the Machine Learning Project Checklist of the course textbook~\cite{geron2022}.
+
+% ---------------------------------------------------------------------
+\section{Project Schedule}
+Table~\ref{tab:schedule} lists the subtasks with their deadlines. This is a single-person project, so
+the author is responsible for all subtasks. The approach for each subtask is described below.
+
+\begin{table}[!t]
+\caption{Project Schedule}
+\label{tab:schedule}
+\centering
+\begin{tabularx}{\columnwidth}{@{}Xcc@{}}
+\toprule
+Subtask & Week & Status \\
+\midrule
+Literature search               & 1--2   & In progress \\
+Frame the problem               & 1      & Done \\
+Get the data                    & 1      & Done \\
+Explore the data                & 2      & Done \\
+\textbf{Project plan report}    & 2      & This report \\
+Prepare the data                & 3      & Planned \\
+Shortlist models (random CV)    & 3--4   & First pass \\
+Grouped CV by building shape    & 5      & Planned \\
+\textbf{Midterm report}         & 6      & Planned \\
+Fine-tune the best models       & 7--8   & Planned \\
+Feature importance and errors   & 9      & Planned \\
+Final tables and figures        & 10     & Planned \\
+\textbf{Final report}           & 11--12 & Planned \\
+\textbf{Recorded presentation}  & 12     & Planned \\
+\bottomrule
+\end{tabularx}
+
+\vspace{2pt}
+\footnotesize Week 1 is the week the topic was selected; week 12 is the last week of the semester.
+All subtasks are carried out by the author.
+\end{table}
+
+\subsection{Literature Search}
+We read the reference study~\cite{tsanas2012} and its references, and we search for later work on the
+same dataset (for example, papers citing~\cite{tsanas2012} on Google Scholar) to collect results to
+compare against. This continues until the final report.
+
+\subsection{Frame the Problem}
+The task is supervised regression with two continuous outputs, HL and CL. To make our results directly
+comparable with~\cite{tsanas2012}, we use the same three errors: mean absolute error (MAE), mean squared
+error (MSE) and mean relative error (MRE). The IRLS and RF results of~\cite{tsanas2012} are our baseline.
+
+\subsection{Get the Data}
+We load the dataset~\cite{uci2012} from a CSV export of the original Excel file, which uses semicolons
+as separators and commas as decimal points. We checked it against the Excel file: 768 buildings,
+10 columns, no missing values and no duplicate rows.
+
+\subsection{Explore the Data}
+We plot histograms and input--output scatter plots, and we measure the association of each input with
+each output using the Spearman rank correlation (with $p$-values) and mutual information, as
+in~\cite{tsanas2012}. This step is done, and our Spearman correlations match those of~\cite{tsanas2012}.
+Relative compactness and surface area are perfectly rank-correlated ($\rho=-1$), so they carry the same
+information. Orientation is not correlated with either output, although it does change the cooling load
+of some two-storey shapes, in a way that does not go in one direction.
+
+\subsection{Prepare the Data}
+No cleaning is needed. Inputs are standardized inside a pipeline, so the scaler is fitted on the
+training folds only. We will also test one-hot encoding of orientation and glazing area distribution,
+and removing the redundant surface area input.
+
+\subsection{Shortlist Promising Models}
+We compare six models implemented in scikit-learn~\cite{pedregosa2011}: linear regression, robust
+linear regression (Huber loss, our counterpart to IRLS), $k$-nearest neighbors, support vector regression,
+random forest~\cite{breiman2001} and gradient boosting~\cite{friedman2001}. They are evaluated with
+10-fold cross-validation (CV) repeated on random splits, as in~\cite{tsanas2012}. As our contribution,
+we repeat the evaluation with grouped CV~\cite{roberts2017}, where all buildings of the same shape (one of
+12) stay in the same fold, to measure performance on unseen shapes. Table~\ref{tab:preliminary} shows the
+first, untuned results.
+
+\begin{table}[!t]
+\caption{First Results: MAE (Mean $\pm$ Std) With 10-Fold CV Repeated 10 Times, Untuned Models}
+\label{tab:preliminary}
+\centering
+\begin{tabular}{@{}lcc@{}}
+\toprule
+Model & Heating load & Cooling load \\
+\midrule
+Linear regression           & $2.09 \pm 0.24$ & $2.27 \pm 0.27$ \\
+Robust linear (Huber)       & $2.03 \pm 0.25$ & $2.20 \pm 0.30$ \\
+$k$-nearest neighbors       & $1.42 \pm 0.20$ & $1.66 \pm 0.24$ \\
+Support vector regression   & $0.55 \pm 0.08$ & $1.13 \pm 0.19$ \\
+Gradient boosting           & $0.34 \pm 0.04$ & $1.02 \pm 0.13$ \\
+Random forest               & $\mathbf{0.31 \pm 0.04}$ & $\mathbf{0.98 \pm 0.14}$ \\
+\midrule
+IRLS in~\cite{tsanas2012}   & $2.14 \pm 0.24$ & $2.21 \pm 0.28$ \\
+RF in~\cite{tsanas2012}     & $0.51 \pm 0.11$ & $1.42 \pm 0.25$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Fine-Tune the System}
+For the two or three best models we will search the hyperparameters (grid or randomized search inside
+CV). The final results will use 100 CV repetitions, as in~\cite{tsanas2012}. We will also compute
+permutation importance and add a random probe feature, as in~\cite{tsanas2012}, to check which inputs
+matter most, and we will try a single model that predicts both outputs together.
+
+\subsection{Present the Results}
+We will summarize the results in tables and figures, compare them with~\cite{tsanas2012},
+\cite{chou2014}, \cite{castelli2015} and~\cite{zegklitz2017}, and prepare the midterm report, the final report and a recorded
+presentation of 10--15 minutes.
+
+% ---------------------------------------------------------------------
+\section*{Acknowledgment}
+AI tools (Claude, Anthropic) were used to help draft this plan and the initial analysis code.
+All suggestions were reviewed carefully by the author, and their correctness was validated.
+
+% ---------------------------------------------------------------------
+\begin{thebibliography}{12}
+
+\bibitem{tsanas2012}
+A.~Tsanas and A.~Xifara, ``Accurate quantitative estimation of energy performance of residential
+buildings using statistical machine learning tools,'' \emph{Energy Build.}, vol.~49, pp.~560--567,
+2012, doi: 10.1016/j.enbuild.2012.03.003.
+
+\bibitem{yu2010}
+Z.~Yu, F.~Haghighat, B.~C.~M. Fung, and H.~Yoshino, ``A decision tree method for building energy
+demand modeling,'' \emph{Energy Build.}, vol.~42, no.~10, pp.~1637--1646, 2010,
+doi: 10.1016/j.enbuild.2010.04.006.
+
+\bibitem{dong2005}
+B.~Dong, C.~Cao, and S.~E. Lee, ``Applying support vector machines to predict building energy
+consumption in tropical region,'' \emph{Energy Build.}, vol.~37, no.~5, pp.~545--553, 2005,
+doi: 10.1016/j.enbuild.2004.09.009.
+
+\bibitem{catalina2008}
+T.~Catalina, J.~Virgone, and E.~Blanco, ``Development and validation of regression models to predict
+monthly heating demand for residential buildings,'' \emph{Energy Build.}, vol.~40, no.~10,
+pp.~1825--1832, 2008, doi: 10.1016/j.enbuild.2008.04.001.
+
+\bibitem{uci2012}
+A.~Tsanas and A.~Xifara, ``Energy Efficiency,'' UCI Machine Learning Repository, 2012.
+[Online]. Available: \url{https://doi.org/10.24432/C51307}
+
+\bibitem{chou2014}
+J.-S. Chou and D.-K. Bui, ``Modeling heating and cooling loads by artificial intelligence for
+energy-efficient building design,'' \emph{Energy Build.}, vol.~82, pp.~437--446, 2014,
+doi: 10.1016/j.enbuild.2014.07.036.
+
+\bibitem{castelli2015}
+M.~Castelli, L.~Trujillo, L.~Vanneschi, and A.~Popovi\v{c}, ``Prediction of energy performance of
+residential buildings: A genetic programming approach,'' \emph{Energy Build.}, vol.~102, pp.~67--74,
+2015, doi: 10.1016/j.enbuild.2015.05.013.
+
+\bibitem{zegklitz2017}
+J.~\v{Z}egklitz and P.~Po\v{s}\'{\i}k, ``Symbolic regression algorithms with built-in linear
+regression,'' 2017, arXiv:1701.03641. [Online]. Available: \url{https://arxiv.org/abs/1701.03641}
+
+\bibitem{yazici2018}
+M.~T. Yazici, S.~Basurra, and M.~M. Gaber, ``Edge machine learning: Enabling smart Internet of Things
+applications,'' \emph{Big Data Cogn. Comput.}, vol.~2, no.~3, Art. no.~26, 2018,
+doi: 10.3390/bdcc2030026.
+
+\bibitem{geron2022}
+A.~G\'{e}ron, \emph{Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow}, 3rd~ed.
+Sebastopol, CA, USA: O'Reilly Media, 2022.
+
+\bibitem{pedregosa2011}
+F.~Pedregosa \emph{et al.}, ``Scikit-learn: Machine learning in Python,'' \emph{J. Mach. Learn. Res.},
+vol.~12, pp.~2825--2830, 2011. [Online]. Available: \url{https://jmlr.org/papers/v12/pedregosa11a.html}
+
+\bibitem{breiman2001}
+L.~Breiman, ``Random forests,'' \emph{Mach. Learn.}, vol.~45, no.~1, pp.~5--32, 2001,
+doi: 10.1023/A:1010933404324.
+
+\bibitem{friedman2001}
+J.~H. Friedman, ``Greedy function approximation: A gradient boosting machine,''
+\emph{Ann. Statist.}, vol.~29, no.~5, pp.~1189--1232, 2001, doi: 10.1214/aos/1013203451.
+
+\bibitem{roberts2017}
+D.~R. Roberts \emph{et al.}, ``Cross-validation strategies for data with temporal, spatial,
+hierarchical, or phylogenetic structure,'' \emph{Ecography}, vol.~40, no.~8, pp.~913--929, 2017,
+doi: 10.1111/ecog.02881.
+
+\end{thebibliography}
+
+\end{document}
