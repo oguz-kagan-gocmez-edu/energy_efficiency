@@ -29,22 +29,20 @@ Machine Learning and Data Science course project, Fall 2026.}}
 % ---------------------------------------------------------------------
 \begin{abstract}
 Heating and cooling loads determine the size of the heating, ventilation and air conditioning (HVAC)
-equipment that a building needs. They are usually computed with detailed simulation software, which is
-slow and requires expert users. Machine learning (ML) models trained on simulated buildings can give
-the same estimates in a fraction of a second. In this project we use the UCI Energy Efficiency dataset,
+equipment that a building requires. They are usually computed with detailed simulation software, which is
+time-consuming and requires expert users. Machine learning (ML) models trained on simulated buildings can
+provide comparable estimates in a fraction of a second. This project uses the UCI Energy Efficiency dataset,
 which contains 768 residential buildings simulated in Ecotect and described by eight design parameters
 (relative compactness, surface area, wall area, roof area, overall height, orientation, glazing area and
-glazing area distribution). We predict two outputs: the heating load (HL) and the cooling load (CL).
-Following the reference study of Tsanas and Xifara, we will explore the data statistically, compare six
-regression models with repeated 10-fold cross-validation and three error measures, tune the most
-promising models, and analyze which inputs matter most.
+glazing area distribution). Two outputs are predicted: the heating load (HL) and the cooling load (CL).
+Following the reference study of Tsanas and Xifara, we will analyze the data statistically, compare six
+regression models using repeated 10-fold cross-validation and three error measures, tune the most
+promising models, and identify the most important inputs.
 
-As our own contribution, we will test how well the models generalize to building shapes that were not
-seen during training. In a random split, buildings that differ only in orientation, which mostly have
-very similar loads, end up in both the training and the test sets, which may make the reported errors
-optimistic. Our first experiments already reproduce the statistical analysis of the reference study, and
-an untuned random forest reaches a mean absolute error of 0.31 for HL and 0.98 for CL, compared with
-0.51 and 1.42 in the reference study.
+As an additional contribution, we will evaluate how well the models generalize to building shapes that
+are not seen during training. Buildings that differ only in orientation mostly have very similar loads.
+In a random split, such buildings appear in both the training and the test sets, which may lead to
+optimistic error estimates.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -54,132 +52,111 @@ Building energy performance, heating load, cooling load, machine learning, regre
 % ---------------------------------------------------------------------
 \section{Introduction}
 \IEEEPARstart{H}{VAC} systems account for most of the energy used in buildings, so estimating heating
-and cooling loads early in the design phase helps to design more energy-efficient buildings~\cite{tsanas2012}.
-Simulation tools give reliable estimates but are time-consuming, which has motivated the use of ML
+and cooling loads in the early design phase supports the design of energy-efficient buildings~\cite{tsanas2012}.
+Simulation tools provide reliable estimates but are time-consuming, which has motivated the use of ML
 models such as decision trees~\cite{yu2010}, support vector machines~\cite{dong2005} and polynomial
 regression~\cite{catalina2008}.
 
-Tsanas and Xifara~\cite{tsanas2012} published the dataset used in this project~\cite{uci2012}. They
-compared a robust linear model, iteratively reweighted least squares (IRLS), with a random forest (RF),
-and reported mean absolute errors (MAE) of 0.51 for HL and 1.42 for CL with the RF. Later studies
+Tsanas and Xifara~\cite{tsanas2012} introduced the dataset used in this project~\cite{uci2012}. They
+compared a robust linear regression model fitted with iteratively reweighted least squares (IRLS) and a
+random forest (RF), and reported mean absolute errors (MAE) of 0.51 for HL and 1.42 for CL with the RF. Later studies
 applied other artificial intelligence techniques~\cite{chou2014} and genetic programming~\cite{castelli2015}
-to the same data. The dataset is also a common benchmark: \v{Z}egklitz and Po\v{s}\'{\i}k~\cite{zegklitz2017}
+to the same data. The dataset is also widely used as a benchmark: \v{Z}egklitz and Po\v{s}\'{\i}k~\cite{zegklitz2017}
 used it to compare symbolic regression methods with a tuned RF and support vector regression (SVR), and
 Yazici \emph{et al.}~\cite{yazici2018} used it to test ML models on a low-power Internet of Things device.
-We follow the Machine Learning Project Checklist of the course textbook~\cite{geron2022}.
+The project follows the Machine Learning Project Checklist of the course textbook~\cite{geron2022}.
 
 % ---------------------------------------------------------------------
 \section{Project Schedule}
-Table~\ref{tab:schedule} lists the subtasks with their deadlines. This is a single-person project, so
-the author is responsible for all subtasks. The approach for each subtask is described below.
+Table~\ref{tab:schedule} lists the subtasks and their planned completion weeks. Since this is a
+single-author project, the author is responsible for all subtasks. The approach to each subtask is
+described in the following subsections.
 
 \begin{table}[!t]
 \caption{Project Schedule}
 \label{tab:schedule}
 \centering
-\begin{tabularx}{\columnwidth}{@{}Xcc@{}}
+\begin{tabularx}{\columnwidth}{@{}Xc@{}}
 \toprule
-Subtask & Week & Status \\
+Subtask & Week \\
 \midrule
-Literature search               & 1--2   & In progress \\
-Frame the problem               & 1      & Done \\
-Get the data                    & 1      & Done \\
-Explore the data                & 2      & Done \\
-\textbf{Project plan report}    & 2      & This report \\
-Prepare the data                & 3      & Planned \\
-Shortlist models (random CV)    & 3--4   & First pass \\
-Grouped CV by building shape    & 5      & Planned \\
-\textbf{Midterm report}         & 6      & Planned \\
-Fine-tune the best models       & 7--8   & Planned \\
-Feature importance and errors   & 9      & Planned \\
-Final tables and figures        & 10     & Planned \\
-\textbf{Final report}           & 11--12 & Planned \\
-\textbf{Recorded presentation}  & 12     & Planned \\
+Literature search               & 1--2   \\
+Frame the problem               & 1      \\
+Get the data                    & 1      \\
+Explore the data                & 2      \\
+\textbf{Project plan report}    & 2      \\
+Prepare the data                & 3      \\
+Shortlist promising models      & 3--4   \\
+Grouped CV by building shape    & 5      \\
+\textbf{Midterm report}         & 6      \\
+Fine-tune the system            & 7--8   \\
+Feature importance and errors   & 9      \\
+Present the results             & 10     \\
+\textbf{Final report}           & 11--12 \\
+\textbf{Recorded presentation}  & 12     \\
 \bottomrule
 \end{tabularx}
 
 \vspace{2pt}
 \footnotesize Week 1 is the week the topic was selected; week 12 is the last week of the semester.
-All subtasks are carried out by the author.
 \end{table}
 
 \subsection{Literature Search}
-We read the reference study~\cite{tsanas2012} and its references, and we search for later work on the
-same dataset (for example, papers citing~\cite{tsanas2012} on Google Scholar) to collect results to
-compare against. This continues until the final report.
+We will review the reference study~\cite{tsanas2012} and its references, and search for subsequent
+studies on the same dataset (e.g., papers citing~\cite{tsanas2012} on Google Scholar) to collect results
+for comparison. This search will continue until the final report.
 
 \subsection{Frame the Problem}
-The task is supervised regression with two continuous outputs, HL and CL. To make our results directly
-comparable with~\cite{tsanas2012}, we use the same three errors: mean absolute error (MAE), mean squared
-error (MSE) and mean relative error (MRE). The IRLS and RF results of~\cite{tsanas2012} are our baseline.
+The task is a supervised regression problem with two continuous outputs, HL and CL. To ensure direct
+comparability with~\cite{tsanas2012}, we use the same three error measures: mean absolute error (MAE),
+mean squared error (MSE), and mean relative error (MRE). The IRLS and RF results reported
+in~\cite{tsanas2012} serve as the baseline.
 
 \subsection{Get the Data}
-We load the dataset~\cite{uci2012} from a CSV export of the original Excel file, which uses semicolons
-as separators and commas as decimal points. We checked it against the Excel file: 768 buildings,
-10 columns, no missing values and no duplicate rows.
+The dataset~\cite{uci2012} was loaded from a CSV export of the original Excel file, which uses
+semicolons as separators and commas as decimal points. The CSV file was verified against the Excel file:
+it contains 768 buildings and 10 columns, with no missing values and no duplicate rows.
 
 \subsection{Explore the Data}
-We plot histograms and input--output scatter plots, and we measure the association of each input with
-each output using the Spearman rank correlation (with $p$-values) and mutual information, as
-in~\cite{tsanas2012}. This step is done, and our Spearman correlations match those of~\cite{tsanas2012}.
-Relative compactness and surface area are perfectly rank-correlated ($\rho=-1$), so they carry the same
-information. Orientation is not correlated with either output, although it does change the cooling load
-of some two-storey shapes, in a way that does not go in one direction.
+Histograms and input--output scatter plots were plotted, and the association between each input and
+each output was measured using mutual information and the Spearman rank correlation (with $p$-values),
+as in~\cite{tsanas2012}. The Spearman correlation was chosen over the Pearson correlation because the
+variables are not normally distributed.
 
 \subsection{Prepare the Data}
-No cleaning is needed. Inputs are standardized inside a pipeline, so the scaler is fitted on the
-training folds only. We will also test one-hot encoding of orientation and glazing area distribution,
-and removing the redundant surface area input.
+The dataset requires no cleaning. The inputs will be standardized within a pipeline so that the
+scaler is fitted on the training folds only. We will also evaluate one-hot encoding of orientation and
+glazing area distribution, as well as the removal of the redundant surface area input.
 
 \subsection{Shortlist Promising Models}
-We compare six models implemented in scikit-learn~\cite{pedregosa2011}: linear regression, robust
-linear regression (Huber loss, our counterpart to IRLS), $k$-nearest neighbors, support vector regression,
-random forest~\cite{breiman2001} and gradient boosting~\cite{friedman2001}. They are evaluated with
-10-fold cross-validation (CV) repeated on random splits, as in~\cite{tsanas2012}. As our contribution,
-we repeat the evaluation with grouped CV~\cite{roberts2017}, where all buildings of the same shape (one of
-12) stay in the same fold, to measure performance on unseen shapes. Table~\ref{tab:preliminary} shows the
-first, untuned results.
-
-\begin{table}[!t]
-\caption{First Results: MAE (Mean $\pm$ Std) With 10-Fold CV Repeated 10 Times, Untuned Models}
-\label{tab:preliminary}
-\centering
-\begin{tabular}{@{}lcc@{}}
-\toprule
-Model & Heating load & Cooling load \\
-\midrule
-Linear regression           & $2.09 \pm 0.24$ & $2.27 \pm 0.27$ \\
-Robust linear (Huber)       & $2.03 \pm 0.25$ & $2.20 \pm 0.30$ \\
-$k$-nearest neighbors       & $1.42 \pm 0.20$ & $1.66 \pm 0.24$ \\
-Support vector regression   & $0.55 \pm 0.08$ & $1.13 \pm 0.19$ \\
-Gradient boosting           & $0.34 \pm 0.04$ & $1.02 \pm 0.13$ \\
-Random forest               & $\mathbf{0.31 \pm 0.04}$ & $\mathbf{0.98 \pm 0.14}$ \\
-\midrule
-IRLS in~\cite{tsanas2012}   & $2.14 \pm 0.24$ & $2.21 \pm 0.28$ \\
-RF in~\cite{tsanas2012}     & $0.51 \pm 0.11$ & $1.42 \pm 0.25$ \\
-\bottomrule
-\end{tabular}
-\end{table}
+We will compare six models implemented in scikit-learn~\cite{pedregosa2011}: linear regression, robust
+linear regression with the Huber loss (a robust alternative comparable to IRLS), $k$-nearest neighbors,
+support vector regression, random forest~\cite{breiman2001}, and gradient boosting~\cite{friedman2001}.
+The models will be evaluated using repeated 10-fold cross-validation (CV) on random splits, as
+in~\cite{tsanas2012}. As an additional contribution, the evaluation will be repeated with grouped
+CV~\cite{roberts2017}, in which all buildings of the same shape (one of 12) are kept in the same fold,
+in order to measure the performance on unseen shapes.
 
 \subsection{Fine-Tune the System}
-For the two or three best models we will search the hyperparameters (grid or randomized search inside
-CV). The final results will use 100 CV repetitions, as in~\cite{tsanas2012}. We will also compute
-permutation importance and add a random probe feature, as in~\cite{tsanas2012}, to check which inputs
-matter most, and we will try a single model that predicts both outputs together.
+For the two or three best-performing models, the hyperparameters will be tuned using grid or randomized
+search within CV. The final results will be obtained with 100 CV repetitions, as in~\cite{tsanas2012}.
+In addition, we will compute the permutation importance and add a random probe feature, as
+in~\cite{tsanas2012}, to determine the most important inputs. We will also evaluate a single
+multi-output model that predicts both loads simultaneously.
 
 \subsection{Present the Results}
-We will summarize the results in tables and figures, compare them with~\cite{tsanas2012},
-\cite{chou2014}, \cite{castelli2015} and~\cite{zegklitz2017}, and prepare the midterm report, the final report and a recorded
-presentation of 10--15 minutes.
+The results will be summarized in tables and figures and compared with those
+of~\cite{tsanas2012}, \cite{chou2014}, \cite{castelli2015}, and~\cite{zegklitz2017}. The
+midterm report, the final report, and a recorded presentation of 10--15 minutes will then be prepared.
 
 % ---------------------------------------------------------------------
 \section*{Acknowledgment}
-AI tools (Claude, Anthropic) were used in two ways in this project. First, they suggested methods:
-the use of Spearman correlation for the non-normally distributed data and a list of candidate
-regression models. The author checked these suggestions against the literature and decided which
-ones to use. Second, they drafted the text of this plan based on the author's decisions, schedule
-and references. The analysis code was written by the author. All AI suggestions were reviewed
-carefully by the author, and their correctness was validated.
+An AI tool (Claude, Anthropic) was used in two ways in this project. First, it suggested methods,
+namely the use of the Spearman correlation for the non-normally distributed data and a list of candidate
+regression models. The author verified these suggestions against the literature and decided which ones
+to adopt. Second, it drafted the text of this plan based on the author's decisions, schedule, and
+references, and assisted with language editing. The analysis code was written by the author. All AI
+suggestions were carefully reviewed by the author, and their correctness was validated.
 
 % ---------------------------------------------------------------------
 \begin{thebibliography}{12}
