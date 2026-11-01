@@ -59,9 +59,8 @@ regression~\cite{catalina2008}.
 
 Tsanas and Xifara~\cite{tsanas2012} introduced the dataset used in this project~\cite{uci2012}. They
 compared a robust linear regression model fitted with iteratively reweighted least squares (IRLS) and a
-random forest (RF), and reported mean absolute errors (MAE) of 0.51 for HL and 1.42 for CL with the RF. Later studies
-applied other artificial intelligence techniques~\cite{chou2014} and genetic programming~\cite{castelli2015}
-to the same data. The dataset is also widely used as a benchmark: \v{Z}egklitz and Po\v{s}\'{\i}k~\cite{zegklitz2017}
+random forest (RF), and reported mean absolute errors (MAE) of 0.51 for HL and 1.42 for CL with the RF. A later study
+applied genetic programming~\cite{castelli2015} to the same data. The dataset is also widely used as a benchmark: \v{Z}egklitz and Po\v{s}\'{\i}k~\cite{zegklitz2017}
 used it to compare symbolic regression methods with a tuned RF and support vector regression (SVR), and
 Yazici \emph{et al.}~\cite{yazici2018} used it to test ML models on a low-power Internet of Things device.
 The project follows the Machine Learning Project Checklist of the course textbook~\cite{geron2022}.
@@ -90,7 +89,7 @@ Shortlist promising models      & 3    \\
 Grouped CV by building shape    & 4    \\
 \textbf{Midterm report}         & 4    \\
 Fine-tune the system            & 5    \\
-Feature importance and errors   & 5--6 \\
+Feature importance              & 5--6 \\
 Present the results             & 6    \\
 \textbf{Final report}           & 6--7 \\
 \textbf{Recorded presentation}  & 7    \\
@@ -105,7 +104,7 @@ and Week~7 (beginning on November~30, 2026) is the last week of the semester.
 \subsection{Literature Search}
 We will review the reference study~\cite{tsanas2012} and its references, and search for subsequent
 studies on the same dataset (e.g., papers citing~\cite{tsanas2012} on Google Scholar) to collect results
-for comparison. This search will continue until the final report.
+for comparison.
 
 \subsection{Frame the Problem}
 The task is a supervised regression problem with two continuous outputs, HL and CL. To ensure direct
@@ -147,7 +146,7 @@ multi-output model that predicts both loads simultaneously.
 
 \subsection{Present the Results}
 The results will be summarized in tables and figures and compared with those
-of~\cite{tsanas2012}, \cite{chou2014}, \cite{castelli2015}, and~\cite{zegklitz2017}. The
+of~\cite{tsanas2012}, \cite{castelli2015}, and~\cite{zegklitz2017}. The
 midterm report, the final report, and a recorded presentation of 10--15 minutes will then be prepared.
 
 % ---------------------------------------------------------------------
@@ -185,11 +184,6 @@ pp.~1825--1832, 2008, doi: 10.1016/j.enbuild.2008.04.001.
 \bibitem{uci2012}
 A.~Tsanas and A.~Xifara, ``Energy Efficiency,'' UCI Machine Learning Repository, 2012.
 [Online]. Available: \url{https://doi.org/10.24432/C51307}
-
-\bibitem{chou2014}
-J.-S. Chou and D.-K. Bui, ``Modeling heating and cooling loads by artificial intelligence for
-energy-efficient building design,'' \emph{Energy Build.}, vol.~82, pp.~437--446, 2014,
-doi: 10.1016/j.enbuild.2014.07.036.
 
 \bibitem{castelli2015}
 M.~Castelli, L.~Trujillo, L.~Vanneschi, and A.~Popovi\v{c}, ``Prediction of energy performance of
