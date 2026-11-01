@@ -125,7 +125,7 @@ doi: 10.3390/s20226419. (Open access; listed in `../articles/README.md`.)
   (RMSE ≥ MAE always; e.g. Table 5, SVR heating: MAE 2.10, RMSE 1.28). The errors after preprocessing (e.g. GRU MAE 0.0102)
   appear to be on the normalized 0–1 scale, yet Table 7 compares them with other studies' errors in kWh/m².
 - **Useful for Related Work:** Table 1 lists ~15 other studies on this dataset, and Table 7 lists their reported errors,
-  including Chou & Bui (2014), whose PDF we do not have. Also relevant to idea 4 below (one model for both loads).
+  including Chou & Bui (2014), whose PDF we do not have (so it is not cited in the plan report). Also relevant to idea 4 below (one model for both loads).
 
 ### Comparison with other work (MAE, random splits, i.e. known shapes)
 
@@ -133,10 +133,7 @@ doi: 10.3390/s20226419. (Open access; listed in `../articles/README.md`.)
 |---|---|---|---|---|
 | Tsanas & Xifara 2012 | Random forest | 10-fold CV × 100 | 0.51 | 1.42 |
 | Castelli et al. 2015 | Genetic programming (HYBRID-LIN) | 10-fold CV × 100 (median) | 0.51 | 1.18 |
-| Chou & Bui 2014 * | Best model reported (method not checked) | not checked | 0.24 | 0.89 |
 | **This project** | Tuned gradient boosting | 10-fold CV × 10, nested (§6.3) | **0.21** | **0.41** |
-
-\* As listed in Sajjad et al. 2020, Table 7; the original paper has not been read yet.
 
 - Žegklitz & Pošík report RMSE (100 random 70/30 splits): 0.51 heating (RF), 1.28 cooling (SVR). Ours, roughly √MSE
   of tuned gradient boosting (§6.2): ≈ 0.32 and ≈ 0.57.
@@ -246,10 +243,12 @@ The course asks you to "perhaps propose your own algorithms/improvements". Possi
 ## 8. Things only you can do
 - [x] Register the topic in the course's topic list (your name in the "Student Names" column), if not done yet.
 - [x] Team: single-person project (decided).
-- [ ] Put real dates into the schedule (plan: +2 weeks, midterm: +4 weeks, final: last week of semester).
-- [ ] Get the PDF of Chou & Bui (2014), doi: 10.1016/j.enbuild.2014.07.036 (not accessible yet). Until then, its numbers
-      come second-hand from Sajjad et al. (2020), Table 7.
-- [x] ≥ 5 references: done (14 in `report/project_plan.tex`). To find more Related Work, good starting points: the article itself, its reference list (e.g. Breiman's random
+- [x] Put real dates into the schedule: 7 project weeks, Week 1 = October 19, 2026, Week 7 = November 30, 2026
+      (last week of the semester). Plan in week 2, midterm in week 4, final report and presentation in weeks 6–7.
+- [ ] Chou & Bui (2014), doi: 10.1016/j.enbuild.2014.07.036: removed from `report/project_plan.tex` because it has not
+      been read. Cite it again (e.g. in Related Work of the midterm report) only after reading the original paper; its numbers
+      (MAE 0.24 heating, 0.89 cooling) are known only second-hand from Sajjad et al. (2020), Table 7.
+- [x] ≥ 5 references: done (13 in `report/project_plan.tex`). To find more Related Work, good starting points: the article itself, its reference list (e.g. Breiman's random
       forests paper, Hastie et al. *Elements of Statistical Learning*), the UCI dataset page
       (https://archive.ics.uci.edu/dataset/242/energy+efficiency), and papers that cite the article
       (Google Scholar → "Cited by"). The papers that cite it are your "Related Work".
