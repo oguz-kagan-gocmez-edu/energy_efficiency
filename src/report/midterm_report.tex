@@ -124,7 +124,7 @@ to zero. The lesson is that a correlation of zero does not prove that an input h
 
 \begin{figure}[!tb]
 \centering
-\includegraphics[width=\columnwidth]{figures/correlation_heatmap.png}
+\includegraphics[width=\columnwidth]{figures/correlation_heatmap.pdf}
 \caption{Spearman rank correlation between all inputs and outputs.}
 \label{fig:heatmap}
 \end{figure}
@@ -170,7 +170,7 @@ RF in~\cite{tsanas2012}     & $0.51 \pm 0.11$ & $1.42 \pm 0.25$ \\
 
 \begin{figure*}[!t]
 \centering
-\includegraphics[width=\textwidth]{figures/model_comparison.png}
+\includegraphics[width=\textwidth]{figures/model_comparison.pdf}
 \caption{MAE of the untuned models (error bars: standard deviation over the CV folds).}
 \label{fig:models}
 \end{figure*}
@@ -245,6 +245,36 @@ SVR (tuned)                & 0.34 & 17.85 & 0.87 & 16.90 \\
 \end{tabular}
 \end{table}
 
+\begin{table}[!t]
+\caption{Revised Project Schedule}
+\label{tab:schedule}
+\centering
+\begin{tabularx}{\columnwidth}{@{}Xc@{}}
+\toprule
+Subtask & Week \\
+\midrule
+Literature search               & 1--2 \\
+Frame the problem               & 1    \\
+Get the data                    & 1    \\
+Explore the data                & 2    \\
+\textbf{Project plan report}    & 2    \\
+Prepare the data                & 3    \\
+Shortlist promising models      & 3    \\
+Grouped CV by building shape    & 4    \\
+Fine-tune the system            & 5    \\
+\textbf{Midterm report}         & 6    \\
+Final run and remaining analyses & 6   \\
+Present the results             & 6--7 \\
+\textbf{Final report}           & 7    \\
+\textbf{Recorded presentation}  & 7    \\
+\bottomrule
+\end{tabularx}
+
+\vspace{2pt}
+\footnotesize Week~1 begins on October~19, 2026, and Week~7 (beginning on November~30, 2026)
+is the last week of the semester.
+\end{table}
+
 \subsection{Input Importance}
 The built-in feature importance of an RF trained on all the data was examined. The shape-related inputs
 (relative compactness or surface area, roof area and overall height) received most of the importance,
@@ -277,35 +307,6 @@ fine-tuning and the grouped-CV analysis were completed earlier than planned. The
 was delayed from Week~4 to Week~6, and the remaining analyses were moved to Week~6 so that the final report
 and the presentation can be completed in Week~7, the last week of the semester.
 
-\begin{table}[!h]
-\caption{Revised Project Schedule}
-\label{tab:schedule}
-\centering
-\begin{tabularx}{\columnwidth}{@{}Xc@{}}
-\toprule
-Subtask & Week \\
-\midrule
-Literature search               & 1--2 \\
-Frame the problem               & 1    \\
-Get the data                    & 1    \\
-Explore the data                & 2    \\
-\textbf{Project plan report}    & 2    \\
-Prepare the data                & 3    \\
-Shortlist promising models      & 3    \\
-Grouped CV by building shape    & 4    \\
-Fine-tune the system            & 5    \\
-\textbf{Midterm report}         & 6    \\
-Final run and remaining analyses & 6   \\
-Present the results             & 6--7 \\
-\textbf{Final report}           & 7    \\
-\textbf{Recorded presentation}  & 7    \\
-\bottomrule
-\end{tabularx}
-
-\vspace{2pt}
-\footnotesize Week~1 begins on October~19, 2026, and Week~7 (beginning on November~30, 2026)
-is the last week of the semester.
-\end{table}
 
 % ---------------------------------------------------------------------
 \section*{Acknowledgment}
